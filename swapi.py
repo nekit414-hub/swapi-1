@@ -2,10 +2,14 @@ import requests  # type: ignore
 import os
 
 
+BASE_URL = 'https://swapi.dev/api/'
+DATA_FOLDER = 'data'
+
+
 class APIRequester:
 
-    def __init__(self):
-        self.base_url = 'https://swapi.dev/api/'
+    def __init__(self, base_url):
+        self.base_url = base_url
 
     def get(self, path):
         try:
@@ -14,28 +18,31 @@ class APIRequester:
             response.raise_for_status()
             return response
         except Exception as e:
-            print(f'При запросе возникла ошибка{e}')
+            print(f'Возникла ошибка при выполнении запроса: {e}')
             return None
 
 
 class SWRequester(APIRequester):
+    def __init__(self):
+        super().__init__(BASE_URL)
+
     def get_sw_categories(self):
-        response = self.get('/')
+        response = self.get('')
         data = response.json()
         return list(data.keys())
 
     def get_sw_info(self, sw_type):
-        response = self.get(f'/{sw_type}')
+        response = self.get(f'/{sw_type}/')
         return response.text
 
 
 def save_sw_data():
     requester = SWRequester()
-    os.makedirs('data', exist_ok=True)
+    os.makedirs(DATA_FOLDER, exist_ok=True)
     categories = requester.get_sw_categories()
     for category in categories:
         data = requester.get_sw_info(category)
-        filename = f'data/{category}.txt'
+        filename = f'{DATA_FOLDER}/{category}.txt'
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(data)
 
