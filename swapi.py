@@ -23,13 +23,13 @@ class APIRequester:
 
 
 class SWRequester(APIRequester):
-    def __init__(self):
-        super().__init__(BASE_URL)
+    def __init__(self, base_url=BASE_URL):
+        super().__init__(base_url)
 
     def get_sw_categories(self):
-        response = self.get('')
+        response = self.get('/')
         data = response.json()
-        return list(data.keys())
+        return data.keys()
 
     def get_sw_info(self, sw_type):
         response = self.get(f'/{sw_type}/')
